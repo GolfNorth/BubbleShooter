@@ -181,7 +181,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: ab8743c8d9818664db9aa7eae25a41c1, type: 3}
     m_FontSize: 24
     m_FontStyle: 0
     m_BestFit: 0
@@ -507,8 +507,8 @@ MonoBehaviour:
     <color=\"blue\"><u><link=\"https://github.com/GolfNorth\">GolfNorth</link></u></color>
     \u0410\u043A\u0447\u0443\u043B\u043F\u0430\u043D\u043E\u0432\r"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
-  m_sharedMaterial: {fileID: 2164040, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 47ef367c7ae519342b95cef7ae2debbd, type: 2}
+  m_sharedMaterial: {fileID: 8916088692841288745, guid: 47ef367c7ae519342b95cef7ae2debbd, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
