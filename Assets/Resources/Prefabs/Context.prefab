@@ -43,3 +43,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 802eaa687977418e8135923be89376cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _settings: {fileID: 11400000, guid: a9015a0d8cdfc5c4c9e87aa3e8156fd5, type: 2}
+  _colorCollection: {fileID: 11400000, guid: 53e35408b02344a4d9482a024f7c40ad, type: 2}

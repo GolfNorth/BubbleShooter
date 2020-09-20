@@ -2,21 +2,50 @@
 
 namespace BubbleShooter
 {
-    public class Bubble : MonoBehaviour
+    [RequireComponent(typeof(MeshRenderer))]
+    public sealed class Bubble : MonoBehaviour
     {
-        [SerializeField] private Camera mainCamera;
-        [SerializeField] private PoolObject<BubblePool, BubbleObject, Vector2> bubblePoolObject;
+        private BubbleColor _bubbleColor;
+        private SpringJoint2D _springJoint;
+        private Rigidbody2D _rigidbody;
+        private MeshRenderer _meshRenderer;
 
-        public PoolObject<BubblePool, BubbleObject, Vector2> BubblePoolObject
+        public Coordinate Coordinate { get; set; }
+
+        public BubbleColor Color
         {
-            get => bubblePoolObject;
-            set => bubblePoolObject = value;
+            get => _bubbleColor;
+            set
+            {
+                _bubbleColor = value;
+                _meshRenderer.material.color = _bubbleColor.Color;
+            }
         }
 
-        public Camera MainCamera
+        private void Awake()
         {
-            get => mainCamera;
-            set => mainCamera = value;
+            _springJoint = GetComponent<SpringJoint2D>();
+            _rigidbody = GetComponent<Rigidbody2D>();
+            _meshRenderer = GetComponent<MeshRenderer>();
+        }
+
+        public void Stick(Rigidbody2D target)
+        {
+            _springJoint.enabled = true;
+            _springJoint.connectedBody = target;
+            _rigidbody.gravityScale = 0;
+        }
+
+        public void Unstick()
+        {
+            _springJoint.enabled = false;
+            _springJoint.connectedBody = null;
+            _rigidbody.gravityScale = 1;
+        }
+
+        private void OnDisable()
+        {
+            Unstick();
         }
     }
 }

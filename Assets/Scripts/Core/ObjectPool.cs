@@ -8,29 +8,36 @@ namespace BubbleShooter
         where TPool : ObjectPool<TPool, TObject, TInfo>
         where TObject : PoolObject<TPool, TObject, TInfo>, new()
     {
-        private void Start()
-        {
-            for (var i = 0; i < initialPoolCount; i++)
-            {
-                var newPoolObject = CreateNewPoolObject();
-                pool.Add(newPoolObject);
-            }
-        }
-
         public virtual TObject Pop(TInfo info)
         {
-            for (var i = 0; i < pool.Count; i++)
-                if (pool[i].inPool)
+            if (Pool.Count < InitialPoolCount)
+            {
+                for (var i = 0; i < InitialPoolCount; i++)
                 {
-                    pool[i].inPool = false;
-                    pool[i].WakeUp(info);
-                    return pool[i];
-                }
+                    var newInitialPoolObject = CreateNewPoolObject();
 
+                    Pool.Add(newInitialPoolObject);
+                }
+            }
+            
+            for (var i = 0; i < Pool.Count; i++)
+            {
+                if (Pool[i].InPool)
+                {
+                    Pool[i].InPool = false;
+                    Pool[i].WakeUp(info);
+
+                    return Pool[i];
+                }
+            }
+            
             var newPoolObject = CreateNewPoolObject();
-            pool.Add(newPoolObject);
-            newPoolObject.inPool = false;
+
+            Pool.Add(newPoolObject);
+
+            newPoolObject.InPool = false;
             newPoolObject.WakeUp(info);
+
             return newPoolObject;
         }
     }
@@ -39,52 +46,69 @@ namespace BubbleShooter
         where TPool : ObjectPool<TPool, TObject>
         where TObject : PoolObject<TPool, TObject>, new()
     {
-        public int initialPoolCount = 10;
+        [SerializeField] private int _initialPoolCount = 10;
 
-        [HideInInspector] public List<TObject> pool = new List<TObject>();
+        [SerializeField] private GameObject _prefab;
 
-        public GameObject prefab;
-
-        private void Start()
+        public int InitialPoolCount
         {
-            for (var i = 0; i < initialPoolCount; i++)
-            {
-                var newPoolObject = CreateNewPoolObject();
-                pool.Add(newPoolObject);
-            }
+            get => _initialPoolCount;
+            set => _initialPoolCount = value;
+        }
+
+        public List<TObject> Pool { get; set; } = new List<TObject>();
+
+        public GameObject Prefab
+        {
+            get => _prefab;
+            set => _prefab = value;
         }
 
         protected TObject CreateNewPoolObject()
         {
             var newPoolObject = new TObject();
-            newPoolObject.instance = Instantiate(prefab);
-            newPoolObject.instance.transform.SetParent(transform);
-            newPoolObject.inPool = true;
+            newPoolObject.Instance = Instantiate(_prefab);
+            newPoolObject.Instance.transform.SetParent(transform);
+            newPoolObject.InPool = true;
             newPoolObject.SetReferences(this as TPool);
             newPoolObject.Sleep();
+
             return newPoolObject;
         }
 
         public virtual TObject Pop()
         {
-            for (var i = 0; i < pool.Count; i++)
-                if (pool[i].inPool)
+            if (Pool.Count < _initialPoolCount)
+            {
+                for (var i = 0; i < _initialPoolCount; i++)
                 {
-                    pool[i].inPool = false;
-                    pool[i].WakeUp();
-                    return pool[i];
+                    var newInitialPoolObject = CreateNewPoolObject();
+
+                    Pool.Add(newInitialPoolObject);
+                }
+            }
+            
+            for (var i = 0; i < Pool.Count; i++)
+                if (Pool[i].InPool)
+                {
+                    Pool[i].InPool = false;
+                    Pool[i].WakeUp();
+                    return Pool[i];
                 }
 
             var newPoolObject = CreateNewPoolObject();
-            pool.Add(newPoolObject);
-            newPoolObject.inPool = false;
+
+            Pool.Add(newPoolObject);
+
+            newPoolObject.InPool = false;
             newPoolObject.WakeUp();
+
             return newPoolObject;
         }
 
         public virtual void Push(TObject poolObject)
         {
-            poolObject.inPool = true;
+            poolObject.InPool = true;
             poolObject.Sleep();
         }
     }
@@ -104,13 +128,31 @@ namespace BubbleShooter
         where TPool : ObjectPool<TPool, TObject>
         where TObject : PoolObject<TPool, TObject>, new()
     {
-        public bool inPool;
-        public GameObject instance;
-        public TPool objectPool;
+        [SerializeField] private bool _inPool;
+        [SerializeField] private GameObject _instance;
+        [SerializeField] private TPool _objectPool;
+
+        public bool InPool
+        {
+            get => _inPool;
+            set => _inPool = value;
+        }
+
+        public GameObject Instance
+        {
+            get => _instance;
+            set => _instance = value;
+        }
+
+        public TPool Pool
+        {
+            get => _objectPool;
+            set => _objectPool = value;
+        }
 
         public void SetReferences(TPool pool)
         {
-            objectPool = pool;
+            _objectPool = pool;
             SetReferences();
         }
 
@@ -129,7 +171,7 @@ namespace BubbleShooter
         public virtual void ReturnToPool()
         {
             var thisObject = this as TObject;
-            objectPool.Push(thisObject);
+            _objectPool.Push(thisObject);
         }
     }
 }

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b62ef05722854d779650e39cba9108f7, type: 3}
+  m_Name: BubbleColorCollection
+  m_EditorClassIdentifier: 
+  _colors:
+  - {fileID: 11400000, guid: 635f83e9e44deda44b023508ddd6e210, type: 2}
+  - {fileID: 11400000, guid: 85f9bb33498d0ad49ab75ac1e5e92d92, type: 2}
+  - {fileID: 11400000, guid: c8920659b4d87f742ab7ef625d70b300, type: 2}
+  - {fileID: 11400000, guid: 8c121f58ebe75fd4c8cc063718e070f9, type: 2}
+  - {fileID: 11400000, guid: 4319ccb1c7816b84290bfc3e1413aa80, type: 2}
+  - {fileID: 11400000, guid: f87cbf57b3af58648904ce7e558c6ac0, type: 2}
+  - {fileID: 11400000, guid: 11a81edeac53e014388d5bd00fcb026c, type: 2}

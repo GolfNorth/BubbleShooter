@@ -1,14 +1,28 @@
-﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using System;
+using UnityEngine;
 
 namespace BubbleShooter
 {
-    public class Context : MonoBehaviour
+    public sealed class Context : MonoBehaviour
     {
+        [SerializeField] private Settings _settings;
+        [SerializeField] private BubbleColorCollection _colorCollection;
+
         private static Context _instance;
+        private static NotificationService _notificationService;
+        private static SceneService _sceneService;
+        private static BoundsService _boundsService;
 
-        private Scene _currentScene;
+        public event Action ExitGameBegin;
 
+        public Settings Settings
+        {
+            get => _settings;
+            set => _settings = value;
+        }
+        
+        public BubbleColorCollection ColorCollection => _colorCollection;
+        
         public static Context Instance
         {
             get
@@ -22,10 +36,23 @@ namespace BubbleShooter
             }
         }
 
+        public NotificationService NotificationService => _notificationService;
+        
+        public SceneService SceneService => _sceneService;
+
+        public BoundsService BoundsService => _boundsService;
+        
+        public LevelController LevelController { get; set; }
+
         private static Context Create()
         {
-            var contextGameObject = new GameObject("Context");
-            _instance = contextGameObject.AddComponent<Context>();
+            var prefab = Resources.Load<GameObject>("Prefabs/Context");
+            var contextGameObject = GameObject.Instantiate(prefab);
+            _instance = contextGameObject.GetComponent<Context>();
+            
+            _notificationService = new NotificationService();
+            _sceneService = new SceneService();
+            _boundsService = new BoundsService();
 
             return _instance;
         }
@@ -35,23 +62,17 @@ namespace BubbleShooter
             if (Instance != this)
             {
                 Destroy(gameObject);
+                
                 return;
             }
 
             DontDestroyOnLoad(gameObject);
-
-            _currentScene = SceneManager.GetActiveScene();
-        }
-
-        public void LoadScene(string sceneName)
-        {
-            SceneManager.LoadScene(sceneName);
-            
-            _currentScene = SceneManager.GetActiveScene();
         }
 
         public void ExitGame()
         {
+            ExitGameBegin?.Invoke();
+            
             Application.Quit();
         }
     }

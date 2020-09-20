@@ -3,30 +3,31 @@ using UnityEngine;
 
 namespace BubbleShooter
 {
-    public class BubblePool : ObjectPool<BubblePool, BubbleObject, Vector2>
+    public sealed class BubblePool : ObjectPool<BubblePool, BubbleObject, Coordinate>
     {
-        protected static Dictionary<GameObject, BubblePool> PoolInstances = new Dictionary<GameObject, BubblePool>();
+        private static readonly Dictionary<GameObject, BubblePool> PoolInstances = new Dictionary<GameObject, BubblePool>();
 
         private void Awake()
         {
-            if(prefab != null && !PoolInstances.ContainsKey(prefab))
-                PoolInstances.Add(prefab, this);
+            if (Prefab != null && !PoolInstances.ContainsKey(Prefab))
+                PoolInstances.Add(Prefab, this);
         }
 
         private void OnDestroy()
         {
-            PoolInstances.Remove(prefab);
+            PoolInstances.Remove(Prefab);
         }
-        
+
         public static BubblePool GetObjectPool(GameObject prefab, int initialPoolCount = 10)
         {
             BubblePool objPool = null;
+            
             if (!PoolInstances.TryGetValue(prefab, out objPool))
             {
-                GameObject obj = new GameObject(prefab.name + "_Pool");
+                var obj = new GameObject(prefab.name + "_Pool");
                 objPool = obj.AddComponent<BubblePool>();
-                objPool.prefab = prefab;
-                objPool.initialPoolCount = initialPoolCount;
+                objPool.Prefab = prefab;
+                objPool.InitialPoolCount = initialPoolCount;
 
                 PoolInstances[prefab] = objPool;
             }
@@ -35,32 +36,31 @@ namespace BubbleShooter
         }
     }
 
-    public class BubbleObject : PoolObject<BubblePool, BubbleObject, Vector2>
+    public sealed class BubbleObject : PoolObject<BubblePool, BubbleObject, Coordinate>
     {
-        public Transform transform;
-        public Rigidbody2D rigidbody2D;
-        public SpriteRenderer spriteRenderer;
-        public Bubble bubble;
+        private Transform _transform;
+        private Bubble _bubble;
+
+        public Bubble Bubble => _bubble;
+
 
         protected override void SetReferences()
         {
-            transform = instance.transform;
-            rigidbody2D = instance.GetComponent<Rigidbody2D> ();
-            spriteRenderer = instance.GetComponent<SpriteRenderer> ();
-            bubble = instance.GetComponent<Bubble>();
-            bubble.BubblePoolObject = this;
-            bubble.MainCamera = Object.FindObjectOfType<Camera> ();
+            _transform = Instance.transform;
+            _bubble = Instance.GetComponent<Bubble>();
         }
 
-        public override void WakeUp(Vector2 position)
+        public override void WakeUp(Coordinate coordinate)
         {
-            transform.position = position;
-            instance.SetActive(true);
+            _transform.localPosition = coordinate.ToLocalPosition();
+            _bubble.Coordinate = coordinate;
+            Instance.SetActive(true);
         }
 
         public override void Sleep()
         {
-            instance.SetActive(false);
+            Instance.SetActive(false);
+            _bubble.Coordinate = new Coordinate(-1, -1);
         }
     }
 }

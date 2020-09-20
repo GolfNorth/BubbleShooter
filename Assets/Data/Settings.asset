@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f5f1e56ad1646aab3d8e01c1baa1f98, type: 3}
+  m_Name: Settings
+  m_EditorClassIdentifier: 
+  _bubblePrefab: {fileID: 8866883843930833643, guid: a36e534bc69778d43999798f049e2ae4, type: 3}
+  _anchorPrefab: {fileID: 130321551077412904, guid: ee2584525a75b264e9ef29ecec9bace8, type: 3}
+  _effectorPrefab: {fileID: 8018260812928252750, guid: c7eeaa73558c2a54ea6f7a76090f9258, type: 3}
+  _bubbleRadius: 0.5
+  _bubbleMaxSpeed: 3
+  _boardOffset: 6
+  _boardSpeed: 8
+  _bounds:
+    Top: 0
+    Bottom: 0
+    Left: -5.75
+    Right: 5.75
