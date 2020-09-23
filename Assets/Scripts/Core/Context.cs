@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace BubbleShooter
 {
@@ -7,13 +6,12 @@ namespace BubbleShooter
     {
         [SerializeField] private Settings _settings;
         [SerializeField] private BubbleColorCollection _colorCollection;
-
+        
         private static Context _instance;
         private static NotificationService _notificationService;
         private static SceneService _sceneService;
         private static BoundsService _boundsService;
-
-        public event Action ExitGameBegin;
+        private static InputService _inputService;
 
         public Settings Settings
         {
@@ -35,12 +33,16 @@ namespace BubbleShooter
                 return _instance != null ? _instance : Create();
             }
         }
+        
+        
 
         public NotificationService NotificationService => _notificationService;
         
         public SceneService SceneService => _sceneService;
 
         public BoundsService BoundsService => _boundsService;
+
+        public InputService InputService => _inputService;
         
         public LevelController LevelController { get; set; }
 
@@ -53,6 +55,7 @@ namespace BubbleShooter
             _notificationService = new NotificationService();
             _sceneService = new SceneService();
             _boundsService = new BoundsService();
+            _inputService = new InputService();
 
             return _instance;
         }
@@ -71,7 +74,8 @@ namespace BubbleShooter
 
         public void ExitGame()
         {
-            ExitGameBegin?.Invoke();
+            _notificationService.Notify(NotificationType.ExitGame);
+            _notificationService = null;
             
             Application.Quit();
         }

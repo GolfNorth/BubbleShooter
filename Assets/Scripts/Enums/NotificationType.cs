@@ -4,6 +4,9 @@
     {
         None,
         SceneLoaded,
-        ExitGame
+        ExitGame,
+        Victory,
+        Defeat,
+        BubbleLaunched
     }
 }

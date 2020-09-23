@@ -1,18 +1,19 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace BubbleShooter
 {
     public sealed class BoundsService
     {
         private Bounds _bounds;
-        private float _topBound;
-        private float _bottomBound;
-        private float _leftBound;
-        private float _rightBound;
 
         public BoundsService()
         {
-            _bounds = new Bounds();
+            _bounds = new Bounds()
+            {
+                Left = Context.Instance.Settings.Bounds.Left,
+                Right = Context.Instance.Settings.Bounds.Right
+            };
             
             RecalculateBounds();
 
@@ -41,6 +42,11 @@ namespace BubbleShooter
 
             _bounds.Top = topRight.y;
             _bounds.Bottom = bottomLeft.y;
+        }
+
+        public void SetTopBound(float topBound)
+        {
+            _bounds.Top = topBound;
         }
     }
 }

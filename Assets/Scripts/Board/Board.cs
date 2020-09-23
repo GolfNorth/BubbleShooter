@@ -6,6 +6,7 @@ namespace BubbleShooter
 {
     public sealed class Board : MonoBehaviour
     {
+        private LevelController _levelController;
         private GameObject _effector;
         private BubblePool _bubblePool;
         private AnchorPool _anchorPool;
@@ -20,45 +21,24 @@ namespace BubbleShooter
         private float _boardSpeed;
         private int _bubbleCount;
 
-        public void Initialize(Level level)
+        public void Initialize()
         {
-            _rows = level.Rows;
-            _columns = level.Columns;
+            _levelController = Context.Instance.LevelController;
+            
+            _rows = _levelController.Level.Rows;
+            _columns = _levelController.Level.Columns;
             _boardOffset = Context.Instance.Settings.BoardOffset;
             _boardSpeed = Context.Instance.Settings.BoardSpeed;
             _bubbleRadius = Context.Instance.Settings.BubbleRadius;
 
             InstantiateEffector();
-            CalculateDimensions();
-            RelocateBoard();
             InitializeTiles();
             InitializePool();
+            
+            CalculateDimensions();
+            RelocateBoard();
 
             _isInitialized = true;
-        }
-
-        public bool CollisionCheck(Vector2 position)
-        {
-            var coordinate = transform.InverseTransformPoint(position).ToCoordinate();
-
-            if (_tiles.Count <= coordinate.Row || _tiles[coordinate.Row].Length <= coordinate.Column) return false;
-
-            var tile = _tiles[coordinate.Row][coordinate.Column];
-
-            if (tile.BubbleObject is null) return false;
-
-            var center = tile.BubbleObject.Bubble.transform.position;
-
-            return BubbleCollisionCheck(position, center);
-        }
-
-        private bool BubbleCollisionCheck(Vector2 position, Vector2 center)
-        {
-            var distX = position.x - center.x;
-            var distY = position.y - center.y;
-            var distance = Mathf.Sqrt(distX * distX + distY * distY);
-        
-            return distance <= _bubbleRadius;
         }
 
         private void InstantiateEffector()
@@ -69,11 +49,11 @@ namespace BubbleShooter
 
         private void RelocateBoard()
         {
-            var position = transform.position;
-            position.x = - _width / 2;
-            position.y = Context.Instance.BoundsService.Bounds.Bottom;
+            var positionY = Context.Instance.BoundsService.Bounds.Bottom + _boardOffset + _height;
+            
+            transform.position = new Vector3(- _width / 2, positionY);
 
-            transform.position = position;
+            Context.Instance.BoundsService.SetTopBound(positionY);
         }
 
         private void CalculateDimensions()
@@ -100,79 +80,48 @@ namespace BubbleShooter
             _anchorPool.transform.localPosition = Vector3.zero;
         }
 
-        public void AddBubble(Coordinate coordinate, BubbleObject bubbleObject)
+        public void AddBubble(Bubble bubble, Coordinate coordinate)
         {
             var anchorObject = _anchorPool.Pop(coordinate);
             
-            bubbleObject.Bubble.Stick(anchorObject.Anchor.Rigidbody);
+            bubble.Stick(anchorObject.Anchor);
             
-            _tiles[coordinate.Row][coordinate.Column].AnchorObject = anchorObject;
-            _tiles[coordinate.Row][coordinate.Column].BubbleObject = bubbleObject;
+            _tiles[coordinate.Row][coordinate.Column].Anchor = anchorObject.Anchor;
+            _tiles[coordinate.Row][coordinate.Column].Bubble = bubble;
+        }
+        
+        public void RemoveBubble(Coordinate coordinate)
+        {
+            var anchor = _tiles[coordinate.Row][coordinate.Column].Anchor;
+            var bubble = _tiles[coordinate.Row][coordinate.Column].Bubble;
+            
+            bubble.Unstick();
+            
+            _tiles[coordinate.Row][coordinate.Column].Anchor = null;
+            _tiles[coordinate.Row][coordinate.Column].Bubble = null;
+            
+            _anchorPool.Push(anchor.AnchorObject);
         }
 
-        public void StickBubble(Coordinate coordinate, BubbleObject bubbleObject)
+        public void StickBubble(Bubble bubble)
         {
-            var anchorObject = _anchorPool.Pop(coordinate);
-            
-            bubbleObject.Bubble.Stick(anchorObject.Anchor.Rigidbody);
+            var coordinate = bubble.transform.position.ToCoordinateWorld();
 
-            while (coordinate.Row >= _tiles.Count)
+            if (coordinate.Row >= _tiles.Count)
             {
                 _tiles.Add(new Tile[_columns]);
-
+            
                 _rows++;
                 
                 CalculateDimensions();
+                RelocateBoard();
             }
-
-            _tiles[coordinate.Row][coordinate.Column].AnchorObject = anchorObject;
-            _tiles[coordinate.Row][coordinate.Column].BubbleObject = bubbleObject;
-
-            StartCoroutine(ActivateEffector(anchorObject.Anchor.transform.position));
-        }
-
-        public void UnstickBubble(Coordinate coordinate)
-        {
-            var anchorObject = _tiles[coordinate.Row][coordinate.Column].AnchorObject;
-            var bubbleObject = _tiles[coordinate.Row][coordinate.Column].BubbleObject;
             
-            bubbleObject.Bubble.Unstick();
+            AddBubble(bubble, coordinate);
             
-            _tiles[coordinate.Row][coordinate.Column].AnchorObject = null;
-            _tiles[coordinate.Row][coordinate.Column].BubbleObject = null;
+            var position = _tiles[coordinate.Row][coordinate.Column].Anchor.transform.position;
             
-            _anchorPool.Push(anchorObject);
-        }
-
-        private void OnDisable()
-        {
-            _isInitialized = false;
-        }
-
-        private void Update()
-        {
-            if (!_isInitialized) return;
-        }
-
-        private void FixedUpdate()
-        {
-            if (!_isInitialized) return;
-            
-            var position = transform.position;
-            var targetY = Context.Instance.BoundsService.Bounds.Bottom + _boardOffset + _height;
-
-            if (targetY < position.y)
-            {
-                position.y -= _boardSpeed * Time.fixedDeltaTime;
-                position.y = position.y < targetY ? targetY : position.y;
-            }
-            else if (targetY > position.y)
-            {
-                position.y += _boardSpeed * Time.fixedDeltaTime;
-                position.y = position.y > targetY ? targetY : position.y;
-            }
-
-            transform.position = position;
+            StartCoroutine(ActivateEffector(position));
         }
 
         private IEnumerator ActivateEffector(Vector3 position)

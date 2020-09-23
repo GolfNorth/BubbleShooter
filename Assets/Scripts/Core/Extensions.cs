@@ -26,24 +26,46 @@ namespace BubbleShooter
             );
         }
         
-        public static Coordinate ToCoordinate(this Vector2 position)
+        public static Vector2 ToLocalPosition(this Vector2 worldPosition)
         {
-            return ToCoordinate((Vector3) position);
+            return ToLocalPosition((Vector3) worldPosition);
+        }
+        
+        public static Vector2 ToLocalPosition(this Vector3 worldPosition)
+        {
+            var board = Context.Instance.LevelController.Board;
+            
+            return board.transform.InverseTransformPoint(worldPosition);
+        }
+        
+        public static Coordinate ToCoordinateLocal(this Vector2 localPosition)
+        {
+            return ToCoordinateLocal((Vector3) localPosition);
         }
 
-        public static Coordinate ToCoordinate(this Vector3 position)
+        public static Coordinate ToCoordinateLocal(this Vector3 localPosition)
         {
             var result = new Coordinate();
 
-            if (position.x < 0 || position.y > 0) return result;
+            if (localPosition.x < 0 || localPosition.y > 0) return result;
 
-            result.Row = (int) Mathf.Abs((position.y - _offset.y) / _step.y);
+            result.Row = (int) Mathf.Abs(localPosition.y / _step.y);
             
-            var offsetX = result.IsRowEven ? _offset.x : _offset.x * 2;
+            var offsetX = result.IsRowEven ? 0 : _offset.x;
             
-            result.Column = (int) Mathf.Abs((position.x - offsetX) / _step.x);
+            result.Column = (int) Mathf.Abs((localPosition.x - offsetX) / _step.x);
 
             return result;
+        }
+        
+        public static Coordinate ToCoordinateWorld(this Vector2 worldPosition)
+        {
+            return ToCoordinateWorld((Vector3) worldPosition);
+        }
+
+        public static Coordinate ToCoordinateWorld(this Vector3 worldPosition)
+        {
+            return worldPosition.ToLocalPosition().ToCoordinateLocal();
         }
     }
 }

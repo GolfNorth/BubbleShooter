@@ -9,6 +9,8 @@ namespace BubbleShooter
         public Rigidbody2D Rigidbody => _rigidbody;
         
         public Coordinate Coordinate { get; set; }
+        
+        public AnchorObject AnchorObject { get; set; }
 
         private void Awake()
         {

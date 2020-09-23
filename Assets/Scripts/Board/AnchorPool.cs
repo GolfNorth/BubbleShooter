@@ -47,6 +47,7 @@ namespace BubbleShooter
         {
             _transform = Instance.transform;
             _anchor = Instance.GetComponent<Anchor>();
+            _anchor.AnchorObject = this;
         }
 
         public override void WakeUp(Coordinate coordinate)

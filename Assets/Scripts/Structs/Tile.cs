@@ -3,7 +3,7 @@
     public struct Tile
     {
         public Coordinate Coordinate;
-        public AnchorObject AnchorObject;
-        public BubbleObject BubbleObject;
+        public Anchor Anchor;
+        public Bubble Bubble;
     }
 }

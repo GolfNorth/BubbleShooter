@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace BubbleShooter
 {
-    public sealed class BubblePool : ObjectPool<BubblePool, BubbleObject, Coordinate>
+    public sealed class BubblePool : ObjectPool<BubblePool, BubbleObject, Vector2>
     {
         private static readonly Dictionary<GameObject, BubblePool> PoolInstances = new Dictionary<GameObject, BubblePool>();
 
@@ -36,7 +36,7 @@ namespace BubbleShooter
         }
     }
 
-    public sealed class BubbleObject : PoolObject<BubblePool, BubbleObject, Coordinate>
+    public sealed class BubbleObject : PoolObject<BubblePool, BubbleObject, Vector2>
     {
         private Transform _transform;
         private Bubble _bubble;
@@ -48,19 +48,18 @@ namespace BubbleShooter
         {
             _transform = Instance.transform;
             _bubble = Instance.GetComponent<Bubble>();
+            _bubble.BubbleObject = this;
         }
 
-        public override void WakeUp(Coordinate coordinate)
+        public override void WakeUp(Vector2 localPosition)
         {
-            _transform.localPosition = coordinate.ToLocalPosition();
-            _bubble.Coordinate = coordinate;
+            _transform.localPosition = localPosition;
             Instance.SetActive(true);
         }
 
         public override void Sleep()
         {
             Instance.SetActive(false);
-            _bubble.Coordinate = new Coordinate(-1, -1);
         }
     }
 }
