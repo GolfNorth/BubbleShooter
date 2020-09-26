@@ -6,8 +6,6 @@ namespace BubbleShooter
 {
     public static class LevelLoader
     {
-        private const int Columns = 11;
-
         public static Level Load(int index)
         {
             var levelAsset = Resources.Load<TextAsset>($"Levels/Level-{index}");
@@ -17,7 +15,9 @@ namespace BubbleShooter
                 : ParseTextAsset(levelAsset);
         }
         
-        private static Level ParseTextAsset (TextAsset levelAsset) {
+        private static Level ParseTextAsset (TextAsset levelAsset)
+        {
+            var columns = Context.Instance.Settings.Columns;
             var colors = new List<BubbleColor[]>();
             var text = levelAsset.text;
             var lines = Regex.Split (text, "\n|\r|\r\n");
@@ -28,11 +28,11 @@ namespace BubbleShooter
                 
                 var values = Regex.Split(valueLine, ";");
                 
-                if (values.Length != Columns) continue;
+                if (values.Length != columns) continue;
                 
-                var row = new BubbleColor[Columns];
+                var row = new BubbleColor[columns];
 
-                for (var i = 0; i < Columns; i++)
+                for (var i = 0; i < columns; i++)
                 {
                     row[i] = Context.Instance.ColorCollection[values[i]];
                 }
@@ -43,7 +43,7 @@ namespace BubbleShooter
             return new Level
             {
                 Rows = colors.Count,
-                Columns = Columns,
+                Columns = columns,
                 Colors = colors.ToArray()
             };
         }

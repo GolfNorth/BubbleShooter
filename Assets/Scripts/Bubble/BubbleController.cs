@@ -41,11 +41,11 @@ namespace BubbleShooter
             return bubbleObject;
         }
 
-        public void RemoveBubble(BubbleObject bubbleObject)
+        public void RemoveBubble(Bubble bubble)
         {
-            _bubblePool.Push(bubbleObject);
+            _bubblePool.Push(bubble.BubbleObject);
 
-            var color = bubbleObject.Bubble.Color;
+            var color = bubble.Color;
             
             if (!_colorsCount.ContainsKey(color)) return;
                 

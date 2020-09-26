@@ -15,8 +15,11 @@ MonoBehaviour:
   _bubblePrefab: {fileID: 8866883843930833643, guid: a36e534bc69778d43999798f049e2ae4, type: 3}
   _anchorPrefab: {fileID: 130321551077412904, guid: ee2584525a75b264e9ef29ecec9bace8, type: 3}
   _effectorPrefab: {fileID: 8018260812928252750, guid: c7eeaa73558c2a54ea6f7a76090f9258, type: 3}
+  _columns: 11
+  _firstRowRatioVictory: 0.3
   _numberOfBubbles: 40
   _bubbleRayCastRadius: 0.3
+  _angularDisplacement: 10
   _minForce: 0.3
   _bubbleRadius: 0.5
   _bubbleMaxSpeed: 30

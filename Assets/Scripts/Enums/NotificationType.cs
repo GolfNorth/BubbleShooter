@@ -7,6 +7,7 @@
         ExitGame,
         Victory,
         Defeat,
-        BubbleLaunched
+        BubbleLaunched,
+        BoardCleared
     }
 }

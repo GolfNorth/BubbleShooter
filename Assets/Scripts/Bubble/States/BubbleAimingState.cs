@@ -7,10 +7,12 @@ namespace BubbleShooter
         private const float AllowableError = 0.01f;
         private Vector2 _startingPosition;
         private InputService _inputService;
+        private float _angularDisplacement;
         private float _pullingDistance;
         private float _maxSpeed;
         private float _minForce;
-        private BubbleTrajectory _trajectory;
+        private BubbleTrajectory _trajectoryA;
+        private BubbleTrajectory _trajectoryB;
 
         public BubbleAimingState(Bubble bubble) : base(bubble, BubbleStateType.Aiming)
         {
@@ -19,10 +21,12 @@ namespace BubbleShooter
         public override void Enter()
         {
             Bubble.gameObject.layer = LayerMask.NameToLayer("Untouchable");
-            _trajectory = new BubbleTrajectory();
+            _trajectoryA = new BubbleTrajectory();
+            _trajectoryB = new BubbleTrajectory();
             _startingPosition = Bubble.transform.position;
             
             _inputService = Context.Instance.InputService;
+            _angularDisplacement = Context.Instance.Settings.AngularDisplacement;
             _pullingDistance = Context.Instance.Settings.PullingDistance;
             _maxSpeed = Context.Instance.Settings.BubbleMaxSpeed;
             _minForce = Context.Instance.Settings.MinForce;
@@ -51,21 +55,26 @@ namespace BubbleShooter
                     position.y = _startingPosition.y;
 
                 Bubble.transform.position = position;
-                
-                var velocity = GetDirection() * (GetForce() * _maxSpeed);
-                
-                _trajectory.SetValues(Bubble.transform.position, velocity);
-                
-                var points = _trajectory.Points;
 
-                var prevPoint = Vector2.zero;
+                var force = GetForce();
                 
-                foreach (var point in points)
+                var velocityA = GetDirection() * (force * _maxSpeed);
+
+                if (1 - force < AllowableError)
                 {
-                    if (prevPoint != Vector2.zero)
-                        Debug.DrawLine(prevPoint, point.Value, Color.magenta);
+                    var velocityB = Quaternion.Euler(0, 0, _angularDisplacement) * (velocityA - position);
+                    velocityA = Quaternion.Euler(0, 0, -_angularDisplacement) * (velocityA - position);
                     
-                    prevPoint = point.Value;
+                    _trajectoryA.SetValues(Bubble.transform.position, velocityA);
+                    _trajectoryB.SetValues(Bubble.transform.position, velocityB);
+                    
+                    Context.Instance.LevelController.Trajectories.DrawTrajectories(_trajectoryA, _trajectoryB);
+                }
+                else
+                {
+                    _trajectoryA.SetValues(Bubble.transform.position, velocityA);
+                    
+                    Context.Instance.LevelController.Trajectories.DrawTrajectory(_trajectoryA);
                 }
             }
             else
@@ -74,7 +83,15 @@ namespace BubbleShooter
 
                 if (force >= _minForce)
                 {
-                    Bubble.Trajectory = _trajectory;
+                    if (1 - force < AllowableError)
+                    {
+                        var randomAngle = Random.Range(-_angularDisplacement, _angularDisplacement);
+                        var velocity = Quaternion.Euler(0, 0, -randomAngle) * GetDirection() * (force * _maxSpeed);
+                        
+                        _trajectoryA.SetValues(Bubble.transform.position, velocity);
+                    }
+                    
+                    Bubble.Trajectory = _trajectoryA;
                     
                     Bubble.SwitchState(BubbleStateType.Moving);
                 }
@@ -82,6 +99,8 @@ namespace BubbleShooter
                 {
                     Bubble.transform.position = _startingPosition;
                 }
+                
+                Context.Instance.LevelController.Trajectories.HideTrajectories();
             }
         }
 

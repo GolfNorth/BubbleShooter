@@ -10,9 +10,12 @@ namespace BubbleShooter
         [SerializeField] private GameObject _anchorPrefab;
         [SerializeField] private GameObject _effectorPrefab;
         [Header("Level")]
+        [SerializeField] private int _columns;
+        [SerializeField] private float _firstRowRatioVictory;
         [SerializeField] private int _numberOfBubbles;
         [Header("Trajectory")]
         [SerializeField] private float _bubbleRayCastRadius;
+        [SerializeField] private float _angularDisplacement;
         [SerializeField] private float _minForce;
         [Header("Bubble")]
         [SerializeField] private float _bubbleRadius;
@@ -57,5 +60,11 @@ namespace BubbleShooter
         public float EffectorDuration => _effectorDuration;
 
         public float MinForce => _minForce;
+
+        public int Columns => _columns;
+
+        public float FirstRowRatioVictory => _firstRowRatioVictory;
+
+        public float AngularDisplacement => _angularDisplacement;
     }
 }

@@ -48,8 +48,13 @@ namespace BubbleShooter
             if (Bubble.Trajectory.Collided)
             {
                 Context.Instance.LevelController.Board.StickBubble(Bubble);
-                Context.Instance.NotificationService.Notify(NotificationType.BubbleLaunched);
             }
+            else
+            {
+                Context.Instance.LevelController.BubbleController.RemoveBubble(Bubble);
+            }
+            
+            Context.Instance.NotificationService.Notify(NotificationType.BubbleLaunched);
         }
 
         public override void Update()

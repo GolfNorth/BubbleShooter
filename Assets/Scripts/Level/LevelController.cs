@@ -8,6 +8,7 @@ namespace BubbleShooter
         private const int LevelIndex = 1;
 
         [SerializeField] private Board _board;
+        [SerializeField] private Trajectories _trajectories;
         [SerializeField] private Transform _nextBubbleAnchor;
         [SerializeField] private Transform _activeBubbleAnchor;
         [SerializeField] private Text _bubblesLeftText;
@@ -33,6 +34,8 @@ namespace BubbleShooter
         public Level Level => _level;
 
         public BubbleController BubbleController => _bubbleController;
+
+        public Trajectories Trajectories => _trajectories;
 
         private void Awake()
         {
@@ -61,7 +64,10 @@ namespace BubbleShooter
         {
             if (notificationType == NotificationType.BubbleLaunched)
             {
-                if (BubblesLeft == 0) return;
+                if (BubblesLeft == 0)
+                {
+                    Context.Instance.NotificationService.Notify(NotificationType.Defeat);
+                }
                 
                 _activeBubble = _nextBubble;
                 _activeBubble.Bubble.transform.position = _activeBubbleAnchor.position;
@@ -72,14 +78,6 @@ namespace BubbleShooter
                 _nextBubble.Bubble.SwitchState(BubbleStateType.Idle);
 
                 BubblesLeft--;
-            }
-        }
-
-        private void Start()
-        {
-            for (int i = 0; i < 40; i++)
-            {
-                //Debug.Log(_bubbleController.CreateBubble().Bubble.Color.Abbreviation);
             }
         }
 
