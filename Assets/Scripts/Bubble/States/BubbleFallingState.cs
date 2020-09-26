@@ -41,6 +41,7 @@ namespace BubbleShooter
             {
                 Context.Instance.LevelController.AddScore();
                 Context.Instance.LevelController.BubbleController.RemoveBubble(Bubble);
+                Context.Instance.NotificationService.Notify(NotificationType.BubbleFell);
             }
         }
 

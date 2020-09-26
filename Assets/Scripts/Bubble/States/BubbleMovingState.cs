@@ -70,9 +70,8 @@ namespace BubbleShooter
             else
             {
                 Context.Instance.LevelController.BubbleController.RemoveBubble(Bubble);
+                Context.Instance.NotificationService.Notify(NotificationType.BubbleLaunched);
             }
-
-            Context.Instance.NotificationService.Notify(NotificationType.BubbleLaunched);
         }
 
         public override void Update()

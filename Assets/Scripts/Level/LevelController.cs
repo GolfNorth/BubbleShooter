@@ -85,9 +85,14 @@ namespace BubbleShooter
         {
             if (_gameEnded) return;
 
-            if (notificationType == NotificationType.BubbleLaunched)
+            if (notificationType == NotificationType.BubbleLaunched || notificationType == NotificationType.BoardReady)
             {
-                if (BubblesLeft == 0) Context.Instance.NotificationService.Notify(NotificationType.Defeat);
+                if (BubblesLeft == 0)
+                {
+                    Context.Instance.NotificationService.Notify(NotificationType.Defeat);
+                    
+                    return;
+                }
 
                 _activeBubble = _nextBubble;
                 _activeBubble.Bubble.transform.position = _activeBubbleAnchor.position;
@@ -96,6 +101,9 @@ namespace BubbleShooter
                 _nextBubble = _bubbleController.CreateBubble();
                 _nextBubble.Bubble.transform.position = _nextBubbleAnchor.position;
                 _nextBubble.Bubble.SwitchState(BubbleStateType.Idle);
+                
+                _bubbleController.ChangeColorWhenNecessary(_activeBubble.Bubble);
+                _bubbleController.ChangeColorWhenNecessary(_nextBubble.Bubble);
 
                 BubblesLeft--;
             }

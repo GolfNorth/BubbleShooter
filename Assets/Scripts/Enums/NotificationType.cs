@@ -8,6 +8,7 @@
         Victory,
         Defeat,
         BubbleLaunched,
-        BoardCleared
+        BubbleFell,
+        BoardReady
     }
 }

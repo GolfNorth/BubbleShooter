@@ -22,6 +22,7 @@ namespace BubbleShooter
         private float _boardOffset;
         private float _boardSpeed;
         private int _bubbleCount;
+        private int _fallingBubbles;
         private bool _victory;
 
         private readonly int[][][] _neighborsOffsets =
@@ -52,6 +53,26 @@ namespace BubbleShooter
             RelocateBoard();
 
             _isInitialized = true;
+            
+            Context.Instance.NotificationService.Notification += OnNotification;
+        }
+
+        private void OnDisable()
+        {
+            Context.Instance.NotificationService.Notification -= OnNotification;
+        }
+
+        private void OnNotification(NotificationType notificationType, object obj)
+        {
+            if (notificationType == NotificationType.BubbleFell)
+            {
+                _fallingBubbles--;
+                
+                if (_fallingBubbles == 0)
+                {
+                    Context.Instance.NotificationService.Notify(NotificationType.BoardReady);
+                }
+            }
         }
 
         private void InstantiateEffector()
@@ -151,16 +172,13 @@ namespace BubbleShooter
             StickBubble(bubble, coordinate);
         }
 
-        public void StickBubble(Bubble bubble, Coordinate coordinate)
+        private void StickBubble(Bubble bubble, Coordinate coordinate)
         {
             if (coordinate.Row >= _tiles.Count)
             {
                 AddNewRow();
 
                 _rows++;
-
-                CalculateDimensions();
-                RelocateBoard();
             }
 
             AddBubble(bubble, coordinate);
@@ -176,16 +194,19 @@ namespace BubbleShooter
                 foreach (var floatingCluster in floatingClusters)
                 foreach (var tile in floatingCluster)
                     UnstickBubble(tile.Coordinate);
-
-                RemoveEmptyTiles();
-                CalculateDimensions();
-                RelocateBoard();
             }
             else
             {
                 var position = _tiles[coordinate.Row][coordinate.Column].Anchor.transform.position;
 
                 StartCoroutine(ActivateEffector(position));
+            }
+            
+            RemoveEmptyTiles();
+
+            if (_fallingBubbles == 0)
+            {
+                Context.Instance.NotificationService.Notify(NotificationType.BoardReady);
             }
         }
 
@@ -215,6 +236,8 @@ namespace BubbleShooter
             if (!bubble) return;
 
             bubble.Unstick();
+
+            _fallingBubbles++;
 
             if (!_victory && coordinate.Row == 0) CheckFirstRow();
         }
@@ -325,7 +348,9 @@ namespace BubbleShooter
 
         private void RemoveEmptyTiles()
         {
-            for (var r = 0; r < _rows; r++)
+            if (_rows == 0) return;
+            
+            for (var r = _rows - 1; r >= 0; r--)
             {
                 var remove = true;
 
@@ -342,6 +367,9 @@ namespace BubbleShooter
 
                 _rows--;
             }
+            
+            CalculateDimensions();
+            RelocateBoard();
         }
 
         private IEnumerator ActivateEffector(Vector3 position)

@@ -40,8 +40,7 @@ namespace BubbleShooter
 
         public BubbleObject CreateBubble()
         {
-            var index = Random.Range(0, _colorsCount.Count);
-            var color = _colorsCount.Keys.ElementAt(index);
+            var color = GetRandomColor();
             var bubbleObject = _bubblePool.Pop();
             bubbleObject.Bubble.Color = color;
             bubbleObject.Bubble.gameObject.SetActive(true);
@@ -86,6 +85,28 @@ namespace BubbleShooter
                 else
                     _colorsCount.Add(color, 1);
             }
+        }
+
+        public void ChangeColorWhenNecessary(Bubble bubble)
+        {
+            var color = bubble.Color;
+            var count = _colorsCount.ContainsKey(color) ? _colorsCount[color] : 0;
+            
+            if (count > 1) return;
+            
+            if (count == 1) _colorsCount.Remove(color);
+            
+            color = GetRandomColor();
+            bubble.Color = GetRandomColor();
+                
+            _colorsCount[color]++;
+        }
+
+        private BubbleColor GetRandomColor()
+        {
+            var index = Random.Range(0, _colorsCount.Count);
+            
+            return _colorsCount.Keys.ElementAt(index);
         }
 
         #endregion

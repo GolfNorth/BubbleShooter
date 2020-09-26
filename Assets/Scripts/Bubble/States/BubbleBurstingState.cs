@@ -31,7 +31,7 @@ namespace BubbleShooter
         {
         }
 
-        public override void Update()
+        public override void LateUpdate()
         {
             if (!Bubble.Animator.GetCurrentAnimatorStateInfo(0).IsName(BurstsAnimation))
             {
