@@ -102,8 +102,7 @@ namespace BubbleShooter
                 _nextBubble.Bubble.transform.position = _nextBubbleAnchor.position;
                 _nextBubble.Bubble.SwitchState(BubbleStateType.Idle);
                 
-                _bubbleController.ChangeColorWhenNecessary(_activeBubble.Bubble);
-                _bubbleController.ChangeColorWhenNecessary(_nextBubble.Bubble);
+                _bubbleController.ChangeColorWhenNecessary(_activeBubble.Bubble, _nextBubble.Bubble);
 
                 BubblesLeft--;
             }

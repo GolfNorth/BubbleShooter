@@ -87,14 +87,22 @@ namespace BubbleShooter
             }
         }
 
-        public void ChangeColorWhenNecessary(Bubble bubble)
+        public void ChangeColorWhenNecessary(Bubble activeBubble, Bubble nextBubble)
+        {
+            var maxCount = activeBubble.Color == nextBubble.Color ? 2 : 1;
+            
+            ChangeColorWhenNecessary(activeBubble, maxCount);
+            ChangeColorWhenNecessary(nextBubble, maxCount);
+        }
+        
+        private void ChangeColorWhenNecessary(Bubble bubble, int maxCount)
         {
             var color = bubble.Color;
-            var count = _colorsCount.ContainsKey(color) ? _colorsCount[color] : 0;
+            var count = _colorsCount.ContainsKey(color) ? _colorsCount[color] : maxCount - 1;
             
-            if (count > 1) return;
+            if (count > maxCount) return;
             
-            if (count == 1) _colorsCount.Remove(color);
+            if (count == maxCount) _colorsCount.Remove(color);
             
             color = GetRandomColor();
             bubble.Color = GetRandomColor();

@@ -70,6 +70,8 @@ namespace BubbleShooter
                 
                 if (_fallingBubbles == 0)
                 {
+                    RemoveEmptyTiles();
+                    
                     Context.Instance.NotificationService.Notify(NotificationType.BoardReady);
                 }
             }
@@ -201,11 +203,11 @@ namespace BubbleShooter
 
                 StartCoroutine(ActivateEffector(position));
             }
-            
-            RemoveEmptyTiles();
 
             if (_fallingBubbles == 0)
             {
+                RemoveEmptyTiles();
+                
                 Context.Instance.NotificationService.Notify(NotificationType.BoardReady);
             }
         }
