@@ -6,8 +6,15 @@ namespace BubbleShooter
 {
     public sealed class BubbleTrajectory
     {
+        #region Constants
+
         private const float AllowableError = 0.01f;
         private const float TimeStep = 0.1f;
+
+        #endregion
+
+        #region Fields
+
         private Vector2 _position;
         private Vector2 _velocity;
         private Bounds _bounds;
@@ -18,11 +25,19 @@ namespace BubbleShooter
         private readonly Dictionary<float, Vector2> _points;
         private readonly List<float> _timeStamps;
 
+        #endregion
+
+        #region Properties
+
         public Dictionary<float, Vector2> Points => _points;
 
         public bool Collided => _collided;
 
         public GameObject CollidedWith => _collidedWith;
+
+        #endregion
+
+        #region Constructor
 
         public BubbleTrajectory()
         {
@@ -41,6 +56,10 @@ namespace BubbleShooter
                 Bottom = bounds.Bottom - radius
             };
         }
+
+        #endregion
+
+        #region Methods
 
         public void SetValues(Vector2 position, Vector2 velocity, float force)
         {
@@ -174,5 +193,7 @@ namespace BubbleShooter
                 }
             }
         }
+
+        #endregion
     }
 }

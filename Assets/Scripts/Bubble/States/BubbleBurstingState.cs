@@ -4,11 +4,21 @@ namespace BubbleShooter
 {
     public sealed class BubbleBurstingState : BubbleState
     {
+        #region Constants
+
         private const string BurstsAnimation = "Bursts";
+
+        #endregion
+
+        #region Constructor
 
         public BubbleBurstingState(Bubble bubble) : base(bubble, BubbleStateType.Bursting)
         {
         }
+
+        #endregion
+
+        #region Methods
 
         public override void Enter()
         {
@@ -29,5 +39,7 @@ namespace BubbleShooter
                 Context.Instance.LevelController.BubbleController.RemoveBubble(Bubble);
             }
         }
+
+        #endregion
     }
 }

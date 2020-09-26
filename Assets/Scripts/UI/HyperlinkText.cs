@@ -6,7 +6,13 @@ namespace BubbleShooter
 {
     public class HyperlinkText : MonoBehaviour, IPointerClickHandler
     {
+        #region Fields
+
         private TMP_Text _tmpText;
+
+        #endregion
+
+        #region Methods
 
         private void Awake()
         {
@@ -25,5 +31,7 @@ namespace BubbleShooter
                 Application.OpenURL(linkInfo.GetLinkID());
             }
         }
+
+        #endregion
     }
 }

@@ -4,11 +4,21 @@ namespace BubbleShooter
 {
     public sealed class BubbleFallingState : BubbleState
     {
+        #region Fields
+
         private float _bottomBorder;
+
+        #endregion
+
+        #region Methods
 
         public BubbleFallingState(Bubble bubble) : base(bubble, BubbleStateType.Falling)
         {
         }
+
+        #endregion
+
+        #region Methods
 
         public override void Enter()
         {
@@ -33,5 +43,7 @@ namespace BubbleShooter
                 Context.Instance.LevelController.BubbleController.RemoveBubble(Bubble);
             }
         }
+
+        #endregion
     }
 }

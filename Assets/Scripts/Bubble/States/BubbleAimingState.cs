@@ -4,7 +4,14 @@ namespace BubbleShooter
 {
     public sealed class BubbleAimingState : BubbleState
     {
+        #region Constants
+
         private const float AllowableError = 0.01f;
+
+        #endregion
+
+        #region Fields
+
         private Vector2 _startingPosition;
         private InputService _inputService;
         private float _angularDisplacement;
@@ -14,9 +21,17 @@ namespace BubbleShooter
         private BubbleTrajectory _trajectoryA;
         private BubbleTrajectory _trajectoryB;
 
+        #endregion
+
+        #region Constructor
+
         public BubbleAimingState(Bubble bubble) : base(bubble, BubbleStateType.Aiming)
         {
         }
+
+        #endregion
+
+        #region Methods
 
         public override void Enter()
         {
@@ -117,5 +132,7 @@ namespace BubbleShooter
 
             return (_startingPosition - position).normalized;
         }
+
+        #endregion
     }
 }

@@ -1,15 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace BubbleShooter
 {
     public sealed class BubbleController
     {
-        private readonly LevelController _levelController;
+        #region Fields
+
         private readonly Dictionary<BubbleColor, int> _colorsCount;
+        private readonly LevelController _levelController;
         private BubblePool _bubblePool;
+
+        #endregion
+
+        #region Constructor
 
         public BubbleController()
         {
@@ -18,6 +23,10 @@ namespace BubbleShooter
 
             InitializePool();
         }
+
+        #endregion
+
+        #region Methods
 
         private void InitializePool()
         {
@@ -78,5 +87,7 @@ namespace BubbleShooter
                     _colorsCount.Add(color, 1);
             }
         }
+
+        #endregion
     }
 }

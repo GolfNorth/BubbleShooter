@@ -4,9 +4,20 @@ namespace BubbleShooter
 {
     public static class Extensions
     {
+        #region Constants
+
         private const int ContactAngle = 300;
-        private static Vector2 _step;
-        private static Vector2 _offset;
+
+        #endregion
+
+        #region Fields
+
+        private static readonly Vector2 _step;
+        private static readonly Vector2 _offset;
+
+        #endregion
+
+        #region Constructor
 
         static Extensions()
         {
@@ -15,6 +26,10 @@ namespace BubbleShooter
             _step = new Vector2(bubbleRadius * 2, bubbleRadius * Mathf.Sin(ContactAngle * Mathf.Deg2Rad) * 2);
             _offset = new Vector2(bubbleRadius, -bubbleRadius);
         }
+
+        #endregion
+
+        #region Methods
 
         public static Vector2 ToLocalPosition(this Coordinate coordinate)
         {
@@ -67,5 +82,7 @@ namespace BubbleShooter
         {
             return worldPosition.ToLocalPosition().ToCoordinateLocal();
         }
+
+        #endregion
     }
 }

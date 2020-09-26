@@ -6,6 +6,8 @@ namespace BubbleShooter
 {
     public static class LevelLoader
     {
+        #region Methods
+
         public static Level Load(int index)
         {
             var levelAsset = Resources.Load<TextAsset>($"Levels/Level-{index}");
@@ -44,5 +46,7 @@ namespace BubbleShooter
                 Colors = colors.ToArray()
             };
         }
+
+        #endregion
     }
 }

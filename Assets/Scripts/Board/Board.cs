@@ -6,6 +6,8 @@ namespace BubbleShooter
 {
     public sealed class Board : MonoBehaviour
     {
+        #region Fields
+
         private LevelController _levelController;
         private GameObject _effector;
         private BubblePool _bubblePool;
@@ -27,6 +29,10 @@ namespace BubbleShooter
             new[] {new[] {1, 0}, new[] {0, 1}, new[] {-1, 1}, new[] {-1, 0}, new[] {-1, -1}, new[] {0, -1}},
             new[] {new[] {1, 0}, new[] {1, 1}, new[] {0, 1}, new[] {-1, 0}, new[] {0, -1}, new[] {1, -1}}
         };
+
+        #endregion
+
+        #region Methods
 
         public void Initialize()
         {
@@ -347,5 +353,7 @@ namespace BubbleShooter
 
             _effector.SetActive(false);
         }
+
+        #endregion
     }
 }

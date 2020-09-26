@@ -4,9 +4,15 @@ namespace BubbleShooter
 {
     public sealed class BubbleIdleState : BubbleState
     {
+        #region Constructor
+
         public BubbleIdleState(Bubble bubble) : base(bubble, BubbleStateType.Idle)
         {
         }
+
+        #endregion
+
+        #region Methods
 
         public override void Enter()
         {
@@ -19,5 +25,7 @@ namespace BubbleShooter
         {
             Bubble.transform.SetParent(Context.Instance.LevelController.Board.transform);
         }
+
+        #endregion
     }
 }

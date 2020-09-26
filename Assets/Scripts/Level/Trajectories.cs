@@ -4,8 +4,14 @@ namespace BubbleShooter
 {
     public sealed class Trajectories : MonoBehaviour
     {
+        #region Fields
+
         [SerializeField] private LineRenderer _lineRendererA;
         [SerializeField] private LineRenderer _lineRendererB;
+
+        #endregion
+
+        #region Methods
 
         public void DrawTrajectory(BubbleTrajectory trajectory)
         {
@@ -45,5 +51,7 @@ namespace BubbleShooter
                 index++;
             }
         }
+
+        #endregion
     }
 }

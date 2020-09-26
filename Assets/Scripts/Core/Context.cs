@@ -4,6 +4,8 @@ namespace BubbleShooter
 {
     public sealed class Context : MonoBehaviour
     {
+        #region Fields
+
         [SerializeField] private Settings _settings;
         [SerializeField] private BubbleColorCollection _colorCollection;
 
@@ -12,6 +14,10 @@ namespace BubbleShooter
         private static SceneService _sceneService;
         private static BoundsService _boundsService;
         private static InputService _inputService;
+
+        #endregion
+
+        #region Properties
 
         public Settings Settings
         {
@@ -34,7 +40,6 @@ namespace BubbleShooter
             }
         }
 
-
         public NotificationService NotificationService => _notificationService;
 
         public SceneService SceneService => _sceneService;
@@ -44,6 +49,10 @@ namespace BubbleShooter
         public InputService InputService => _inputService;
 
         public LevelController LevelController { get; set; }
+
+        #endregion
+
+        #region Methods
 
         private static Context Create()
         {
@@ -78,5 +87,7 @@ namespace BubbleShooter
 
             Application.Quit();
         }
+
+        #endregion
     }
 }

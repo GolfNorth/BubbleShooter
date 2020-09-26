@@ -6,8 +6,14 @@ namespace BubbleShooter
     [CreateAssetMenu(fileName = "BubbleColorCollection", menuName = "Bubble Color Collection")]
     public sealed class BubbleColorCollection : ScriptableObject
     {
+        #region Fields
+
         [SerializeField] private BubbleColor[] _colors;
         private Dictionary<string, BubbleColor> _colorsDictionary;
+
+        #endregion
+
+        #region Properties
 
         public BubbleColor this[string abbreviation]
         {
@@ -28,5 +34,7 @@ namespace BubbleShooter
                     : null;
             }
         }
+
+        #endregion
     }
 }

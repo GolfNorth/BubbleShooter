@@ -4,9 +4,15 @@ namespace BubbleShooter
 {
     public sealed class BubbleStickedState : BubbleState
     {
+        #region Constructor
+
         public BubbleStickedState(Bubble bubble) : base(bubble, BubbleStateType.Sticked)
         {
         }
+
+        #endregion
+
+        #region Methods
 
         public override void Enter()
         {
@@ -24,5 +30,7 @@ namespace BubbleShooter
             Bubble.Rigidbody.drag = 0;
             Bubble.SpringJoint.enabled = false;
         }
+
+        #endregion
     }
 }

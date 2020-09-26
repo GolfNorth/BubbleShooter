@@ -5,7 +5,13 @@ namespace BubbleShooter
 {
     public sealed class BoundsService
     {
+        #region Fileds
+
         private Bounds _bounds;
+
+        #endregion
+
+        #region Constructor
 
         public BoundsService()
         {
@@ -20,12 +26,20 @@ namespace BubbleShooter
             Context.Instance.NotificationService.Notification += OnNotification;
         }
 
+        #endregion
+
+        #region Properties
+
+        public Bounds Bounds => _bounds;
+
+        #endregion
+
+        #region Methods
+
         private void OnNotification(NotificationType notificationType, object obj)
         {
             if (notificationType == NotificationType.SceneLoaded) RecalculateBounds();
         }
-
-        public Bounds Bounds => _bounds;
 
         private void RecalculateBounds()
         {
@@ -45,5 +59,7 @@ namespace BubbleShooter
         {
             _bounds.Top = topBound;
         }
+
+        #endregion
     }
 }

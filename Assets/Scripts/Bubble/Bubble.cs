@@ -5,6 +5,8 @@ namespace BubbleShooter
     [RequireComponent(typeof(MeshRenderer))]
     public sealed class Bubble : MonoBehaviour
     {
+        #region Fields
+
         private BubbleColor _bubbleColor;
         private SpringJoint2D _springJoint;
         private Rigidbody2D _rigidbody;
@@ -18,6 +20,10 @@ namespace BubbleShooter
         private BubbleStickedState _stickedState;
         private BubbleFallingState _fallingState;
         private BubbleBurstingState _burstingState;
+
+        #endregion
+
+        #region Properties
 
         public BubbleObject BubbleObject { get; set; }
 
@@ -40,6 +46,10 @@ namespace BubbleShooter
         public Rigidbody2D Rigidbody => _rigidbody;
 
         public Animator Animator => _animator;
+
+        #endregion
+
+        #region Methods
 
         private void Awake()
         {
@@ -122,5 +132,7 @@ namespace BubbleShooter
         {
             _currentState?.FixedUpdate();
         }
+
+        #endregion
     }
 }

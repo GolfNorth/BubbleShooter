@@ -5,6 +5,8 @@ namespace BubbleShooter
     [CreateAssetMenu(fileName = "Settings")]
     public sealed class Settings : ScriptableObject
     {
+        #region Fields
+
         [Header("Prefabs")] [SerializeField] private GameObject _bubblePrefab;
         [SerializeField] private GameObject _anchorPrefab;
         [SerializeField] private GameObject _effectorPrefab;
@@ -27,6 +29,9 @@ namespace BubbleShooter
         [SerializeField] private float _pullingDistance;
         [Header("Other")] [SerializeField] private Bounds _bounds;
 
+        #endregion
+
+        #region Properties
 
         public GameObject BubblePrefab => _bubblePrefab;
 
@@ -63,5 +68,7 @@ namespace BubbleShooter
         public float FirstRowRatioVictory => _firstRowRatioVictory;
 
         public float AngularDisplacement => _angularDisplacement;
+
+        #endregion
     }
 }

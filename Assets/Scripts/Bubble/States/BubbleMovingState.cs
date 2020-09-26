@@ -6,14 +6,24 @@ namespace BubbleShooter
 {
     public sealed class BubbleMovingState : BubbleState
     {
-        private float _t;
+        #region Fields
+
         private Vector2 _nextPosition;
         private Vector2 _prevPosition;
+        private float _t;
         private float _timeToReachTarget;
+
+        #endregion
+
+        #region Constructor
 
         public BubbleMovingState(Bubble bubble) : base(bubble, BubbleStateType.Moving)
         {
         }
+
+        #endregion
+
+        #region Methods
 
         public override void Enter()
         {
@@ -70,5 +80,7 @@ namespace BubbleShooter
             _t += Time.deltaTime / _timeToReachTarget;
             Bubble.transform.position = Vector3.Lerp(_prevPosition, _nextPosition, _t);
         }
+
+        #endregion
     }
 }

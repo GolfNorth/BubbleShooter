@@ -6,7 +6,13 @@ namespace BubbleShooter
 {
     public sealed class LevelController : MonoBehaviour
     {
+        #region Constatnts
+
         private const int LevelIndex = 1;
+
+        #endregion
+
+        #region Fields
 
         [SerializeField] private Board _board;
         [SerializeField] private Trajectories _trajectories;
@@ -23,6 +29,10 @@ namespace BubbleShooter
         private BubbleObject _nextBubble;
         private BubbleObject _activeBubble;
         private BubbleController _bubbleController;
+
+        #endregion
+
+        #region Properties
 
         public int BubblesLeft
         {
@@ -43,6 +53,10 @@ namespace BubbleShooter
         public BubbleController BubbleController => _bubbleController;
 
         public Trajectories Trajectories => _trajectories;
+
+        #endregion
+
+        #region Methods
 
         private void Awake()
         {
@@ -117,5 +131,7 @@ namespace BubbleShooter
             if (_gameEnded && Context.Instance.InputService.HoldPressed)
                 Context.Instance.SceneService.LoadScene("MainScene");
         }
+
+        #endregion
     }
 }
