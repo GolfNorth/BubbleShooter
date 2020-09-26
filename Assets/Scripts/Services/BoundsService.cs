@@ -14,7 +14,7 @@ namespace BubbleShooter
                 Left = Context.Instance.Settings.Bounds.Left,
                 Right = Context.Instance.Settings.Bounds.Right
             };
-            
+
             RecalculateBounds();
 
             Context.Instance.NotificationService.Notification += OnNotification;
@@ -22,10 +22,7 @@ namespace BubbleShooter
 
         private void OnNotification(NotificationType notificationType, object obj)
         {
-            if (notificationType == NotificationType.SceneLoaded)
-            {
-                RecalculateBounds();
-            }
+            if (notificationType == NotificationType.SceneLoaded) RecalculateBounds();
         }
 
         public Bounds Bounds => _bounds;
@@ -33,9 +30,9 @@ namespace BubbleShooter
         private void RecalculateBounds()
         {
             var camera = Camera.main;
-            
+
             if (camera == null) return;
-            
+
             var z = camera.gameObject.transform.position.z;
             var topRight = camera.ViewportToWorldPoint(new Vector3(1, 1, -z));
             var bottomLeft = camera.ViewportToWorldPoint(new Vector3(0, 0, -z));

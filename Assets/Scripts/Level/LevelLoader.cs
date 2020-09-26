@@ -14,29 +14,26 @@ namespace BubbleShooter
                 ? new Level()
                 : ParseTextAsset(levelAsset);
         }
-        
-        private static Level ParseTextAsset (TextAsset levelAsset)
+
+        private static Level ParseTextAsset(TextAsset levelAsset)
         {
             var columns = Context.Instance.Settings.Columns;
             var colors = new List<BubbleColor[]>();
             var text = levelAsset.text;
-            var lines = Regex.Split (text, "\n|\r|\r\n");
- 
+            var lines = Regex.Split(text, "\n|\r|\r\n");
+
             foreach (var valueLine in lines)
             {
                 if (string.IsNullOrWhiteSpace(valueLine)) continue;
-                
+
                 var values = Regex.Split(valueLine, ";");
-                
+
                 if (values.Length != columns) continue;
-                
+
                 var row = new BubbleColor[columns];
 
-                for (var i = 0; i < columns; i++)
-                {
-                    row[i] = Context.Instance.ColorCollection[values[i]];
-                }
-                
+                for (var i = 0; i < columns; i++) row[i] = Context.Instance.ColorCollection[values[i]];
+
                 colors.Add(row);
             }
 

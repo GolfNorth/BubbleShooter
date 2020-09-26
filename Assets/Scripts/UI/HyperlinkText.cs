@@ -15,11 +15,13 @@ namespace BubbleShooter
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            var linkIndex = TMP_TextUtilities.FindIntersectingLink(_tmpText, eventData.position, eventData.pressEventCamera);
+            var linkIndex =
+                TMP_TextUtilities.FindIntersectingLink(_tmpText, eventData.position, eventData.pressEventCamera);
 
-            if( linkIndex != -1 ) {
+            if (linkIndex != -1)
+            {
                 var linkInfo = _tmpText.textInfo.linkInfo[linkIndex];
-                
+
                 Application.OpenURL(linkInfo.GetLinkID());
             }
         }

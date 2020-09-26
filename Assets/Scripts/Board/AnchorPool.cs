@@ -5,7 +5,8 @@ namespace BubbleShooter
 {
     public sealed class AnchorPool : ObjectPool<AnchorPool, AnchorObject, Coordinate>
     {
-        private static readonly Dictionary<GameObject, AnchorPool> PoolInstances = new Dictionary<GameObject, AnchorPool>();
+        private static readonly Dictionary<GameObject, AnchorPool> PoolInstances =
+            new Dictionary<GameObject, AnchorPool>();
 
         private void Awake()
         {
@@ -21,7 +22,7 @@ namespace BubbleShooter
         public static AnchorPool GetObjectPool(GameObject prefab, int initialPoolCount = 10)
         {
             AnchorPool objPool = null;
-            
+
             if (!PoolInstances.TryGetValue(prefab, out objPool))
             {
                 var obj = new GameObject(prefab.name + "_Pool");

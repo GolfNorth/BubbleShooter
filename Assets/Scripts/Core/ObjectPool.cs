@@ -11,17 +11,14 @@ namespace BubbleShooter
         public virtual TObject Pop(TInfo info)
         {
             if (Pool.Count < InitialPoolCount)
-            {
                 for (var i = 0; i < InitialPoolCount; i++)
                 {
                     var newInitialPoolObject = CreateNewPoolObject();
 
                     Pool.Add(newInitialPoolObject);
                 }
-            }
-            
+
             for (var i = 0; i < Pool.Count; i++)
-            {
                 if (Pool[i].InPool)
                 {
                     Pool[i].InPool = false;
@@ -29,8 +26,7 @@ namespace BubbleShooter
 
                     return Pool[i];
                 }
-            }
-            
+
             var newPoolObject = CreateNewPoolObject();
 
             Pool.Add(newPoolObject);
@@ -79,15 +75,13 @@ namespace BubbleShooter
         public virtual TObject Pop()
         {
             if (Pool.Count < _initialPoolCount)
-            {
                 for (var i = 0; i < _initialPoolCount; i++)
                 {
                     var newInitialPoolObject = CreateNewPoolObject();
 
                     Pool.Add(newInitialPoolObject);
                 }
-            }
-            
+
             for (var i = 0; i < Pool.Count; i++)
                 if (Pool[i].InPool)
                 {

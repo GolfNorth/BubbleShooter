@@ -10,11 +10,12 @@ namespace BubbleShooter
 
         public override void Enter()
         {
+            Bubble.gameObject.layer = LayerMask.NameToLayer("Bubble");
             Bubble.Rigidbody.bodyType = RigidbodyType2D.Dynamic;
             Bubble.Rigidbody.gravityScale = 0;
             Bubble.Rigidbody.drag = Context.Instance.Settings.BubbleStickedDrag;
             Bubble.SpringJoint.enabled = true;
-            Bubble.SpringJoint.connectedBody  = Bubble.Anchor.Rigidbody;
+            Bubble.SpringJoint.connectedBody = Bubble.Anchor.Rigidbody;
         }
 
         public override void Exit()

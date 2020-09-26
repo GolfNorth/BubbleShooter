@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -24,7 +23,7 @@ namespace BubbleShooter
         {
             var poolCount = _levelController.Level.Columns * _levelController.Level.Rows;
             var bubblePrefab = Context.Instance.Settings.BubblePrefab;
-            
+
             _bubblePool = BubblePool.GetObjectPool(bubblePrefab, poolCount);
             _bubblePool.transform.SetParent(_levelController.Board.transform);
             _bubblePool.transform.localPosition = Vector3.zero;
@@ -38,6 +37,8 @@ namespace BubbleShooter
             bubbleObject.Bubble.Color = color;
             bubbleObject.Bubble.gameObject.SetActive(true);
 
+            _colorsCount[color]++;
+
             return bubbleObject;
         }
 
@@ -46,37 +47,35 @@ namespace BubbleShooter
             _bubblePool.Push(bubble.BubbleObject);
 
             var color = bubble.Color;
-            
+
             if (!_colorsCount.ContainsKey(color)) return;
-                
+
             _colorsCount[color]--;
 
             if (_colorsCount[color] == 0)
                 _colorsCount.Remove(color);
         }
-        
+
         public void CreateBubbles(Level level)
         {
             for (var r = 0; r < level.Rows; r++)
+            for (var c = 0; c < level.Columns; c++)
             {
-                for (var c = 0; c < level.Columns; c++)
-                {
-                    if (level.Colors[r][c] is null) continue;
-                    
-                    var coordinate = new Coordinate(r, c);
-                    var color = level.Colors[r][c];
-                    var bubbleObject = _bubblePool.Pop(coordinate.ToLocalPosition());
-                    bubbleObject.Bubble.Color = color;
+                if (level.Colors[r][c] is null) continue;
 
-                    _levelController.Board.AddBubble(bubbleObject.Bubble, coordinate);
+                var coordinate = new Coordinate(r, c);
+                var color = level.Colors[r][c];
+                var bubbleObject = _bubblePool.Pop(coordinate.ToLocalPosition());
+                bubbleObject.Bubble.Color = color;
 
-                    if (!color.IsSpawned) continue;
-                    
-                    if (_colorsCount.ContainsKey(color))
-                        _colorsCount[color]++;
-                    else
-                        _colorsCount.Add(color, 1);
-                }
+                _levelController.Board.AddBubble(bubbleObject.Bubble, coordinate);
+
+                if (!color.IsSpawned) continue;
+
+                if (_colorsCount.ContainsKey(color))
+                    _colorsCount[color]++;
+                else
+                    _colorsCount.Add(color, 1);
             }
         }
     }

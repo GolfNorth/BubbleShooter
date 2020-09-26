@@ -8,7 +8,7 @@ namespace BubbleShooter
         {
             Context.Instance.SceneService.LoadScene(sceneName);
         }
-        
+
         public void ExitGame()
         {
             Context.Instance.ExitGame();

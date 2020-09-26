@@ -10,7 +10,7 @@ namespace BubbleShooter
         private Vector2 _nextPosition;
         private Vector2 _prevPosition;
         private float _timeToReachTarget;
-        
+
         public BubbleMovingState(Bubble bubble) : base(bubble, BubbleStateType.Moving)
         {
         }
@@ -26,7 +26,6 @@ namespace BubbleShooter
 
         public override void Exit()
         {
-            Bubble.gameObject.layer = LayerMask.NameToLayer("Bubble");
             Bubble.transform.SetParent(Context.Instance.LevelController.Board.transform);
         }
 
@@ -34,26 +33,35 @@ namespace BubbleShooter
         {
             var points = Bubble.Trajectory.Points;
             var timeStamps = new List<float>(points.Keys);
-            
+
             for (var i = 1; i < timeStamps.Count; i++)
             {
                 _t = 0;
                 _timeToReachTarget = timeStamps[i] - timeStamps[i - 1];
                 _prevPosition = Bubble.transform.position;
                 _nextPosition = points[timeStamps[i]];
-                
+
                 yield return new WaitForSeconds(_timeToReachTarget);
             }
 
             if (Bubble.Trajectory.Collided)
             {
-                Context.Instance.LevelController.Board.StickBubble(Bubble);
+                if (Bubble.Trajectory.CollidedWith != null)
+                {
+                    var stickedBubble = Bubble.Trajectory.CollidedWith.GetComponent<Bubble>();
+
+                    Context.Instance.LevelController.Board.ReplaceBubble(stickedBubble, Bubble);
+                }
+                else
+                {
+                    Context.Instance.LevelController.Board.StickBubble(Bubble);
+                }
             }
             else
             {
                 Context.Instance.LevelController.BubbleController.RemoveBubble(Bubble);
             }
-            
+
             Context.Instance.NotificationService.Notify(NotificationType.BubbleLaunched);
         }
 

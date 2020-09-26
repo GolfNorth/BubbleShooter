@@ -73,8 +73,17 @@ namespace BubbleShooter
         {
             _tiles = new List<Tile[]>();
 
-            for (var i = 0; i < _rows; i++)
-                _tiles.Add(new Tile[_columns]);
+            for (var r = 0; r < _rows; r++) AddNewRow();
+        }
+
+        private void AddNewRow()
+        {
+            _tiles.Add(new Tile[_columns]);
+
+            var r = _tiles.Count - 1;
+
+            for (var c = 0; c < _columns; c++)
+                _tiles[r][c] = new Tile();
         }
 
         private void InitializePool()
@@ -95,6 +104,19 @@ namespace BubbleShooter
 
             _tiles[coordinate.Row][coordinate.Column].Anchor = anchorObject.Anchor;
             _tiles[coordinate.Row][coordinate.Column].Bubble = bubble;
+        }
+
+        public Bubble RemoveBubble(Coordinate coordinate)
+        {
+            var anchor = _tiles[coordinate.Row][coordinate.Column].Anchor;
+            var bubble = _tiles[coordinate.Row][coordinate.Column].Bubble;
+
+            _tiles[coordinate.Row][coordinate.Column].Anchor = null;
+            _tiles[coordinate.Row][coordinate.Column].Bubble = null;
+
+            if (anchor) _anchorPool.Push(anchor.AnchorObject);
+
+            return bubble;
         }
 
         private void CheckFirstRow()
@@ -120,9 +142,14 @@ namespace BubbleShooter
         {
             var coordinate = bubble.transform.position.ToCoordinateWorld();
 
+            StickBubble(bubble, coordinate);
+        }
+
+        public void StickBubble(Bubble bubble, Coordinate coordinate)
+        {
             if (coordinate.Row >= _tiles.Count)
             {
-                _tiles.Add(new Tile[_columns]);
+                AddNewRow();
 
                 _rows++;
 
@@ -132,22 +159,56 @@ namespace BubbleShooter
 
             AddBubble(bubble, coordinate);
 
-            var position = _tiles[coordinate.Row][coordinate.Column].Anchor.transform.position;
+            var cluster = GetCluster(coordinate, true, true);
 
-            StartCoroutine(ActivateEffector(position));
+            if (cluster.Count >= 3)
+            {
+                foreach (var tile in cluster) BurstsBubble(tile.Coordinate);
+
+                var floatingClusters = GetFloatingClusters();
+
+                foreach (var floatingCluster in floatingClusters)
+                foreach (var tile in floatingCluster)
+                    UnstickBubble(tile.Coordinate);
+
+                RemoveEmptyTiles();
+                CalculateDimensions();
+                RelocateBoard();
+            }
+            else
+            {
+                var position = _tiles[coordinate.Row][coordinate.Column].Anchor.transform.position;
+
+                StartCoroutine(ActivateEffector(position));
+            }
+        }
+
+        public void ReplaceBubble(Bubble stickedBubble, Bubble newBubble)
+        {
+            var coordinate = stickedBubble.transform.localPosition.ToCoordinateLocal();
+
+            BurstsBubble(coordinate);
+            StickBubble(newBubble, coordinate);
+        }
+
+        public void BurstsBubble(Coordinate coordinate)
+        {
+            var bubble = RemoveBubble(coordinate);
+
+            if (!bubble) return;
+
+            bubble.Burst();
+
+            if (!_victory && coordinate.Row == 0) CheckFirstRow();
         }
 
         public void UnstickBubble(Coordinate coordinate)
         {
-            var anchor = _tiles[coordinate.Row][coordinate.Column].Anchor;
-            var bubble = _tiles[coordinate.Row][coordinate.Column].Bubble;
+            var bubble = RemoveBubble(coordinate);
+
+            if (!bubble) return;
 
             bubble.Unstick();
-
-            _tiles[coordinate.Row][coordinate.Column].Anchor = null;
-            _tiles[coordinate.Row][coordinate.Column].Bubble = null;
-
-            _anchorPool.Push(anchor.AnchorObject);
 
             if (!_victory && coordinate.Row == 0) CheckFirstRow();
         }
@@ -168,13 +229,113 @@ namespace BubbleShooter
 
             for (var i = 0; i < n.Length; i++)
             {
-                var nx = tile.Coordinate.Column + n[i][0];
-                var ny = tile.Coordinate.Row + n[i][1];
+                var nColumn = tile.Coordinate.Column + n[i][0];
+                var nRow = tile.Coordinate.Row + n[i][1];
 
-                if (nx >= 0 && nx < _columns && ny >= 0 && ny < _rows) neighbors.Add(_tiles[nx][ny]);
+                if (nColumn >= 0 && nColumn < _columns && nRow >= 0 && nRow < _rows && _tiles[nRow][nColumn].Anchor)
+                    neighbors.Add(_tiles[nRow][nColumn]);
             }
 
             return neighbors;
+        }
+
+        private List<Tile> GetCluster(Coordinate coordinate, bool resetProcessed, bool matchType)
+        {
+            if (resetProcessed) ResetProcessed();
+
+            var tile = _tiles[coordinate.Row][coordinate.Column];
+            var color = tile.Bubble.Color.Color;
+
+            var queue = new Queue<Tile>();
+            var cluster = new List<Tile>();
+
+            tile.Processed = true;
+            queue.Enqueue(tile);
+
+            while (queue.Count > 0)
+            {
+                var currentTile = queue.Dequeue();
+
+                if (!currentTile.Bubble) continue;
+
+                var currentColor = currentTile.Bubble.Color.Color;
+
+                if (!matchType || currentColor == color)
+                {
+                    cluster.Add(currentTile);
+
+                    var neighbors = GetNeighbors(currentTile);
+
+                    foreach (var neighbor in neighbors)
+                        if (!neighbor.Processed)
+                        {
+                            neighbor.Processed = true;
+                            queue.Enqueue(neighbor);
+                        }
+                }
+            }
+
+            return cluster;
+        }
+
+        private List<List<Tile>> GetFloatingClusters()
+        {
+            ResetProcessed();
+
+            var clusters = new List<List<Tile>>();
+
+            for (var r = 0; r < _rows; r++)
+            for (var c = 0; c < _columns; c++)
+            {
+                var tile = _tiles[r][c];
+
+                if (tile.Processed || !tile.Anchor) continue;
+
+                var foundCluster = GetCluster(tile.Coordinate, false, false);
+
+                if (foundCluster.Count <= 0) continue;
+
+                var floating = true;
+
+                foreach (var foundTile in foundCluster)
+                    if (foundTile.Coordinate.Row == 0)
+                    {
+                        floating = false;
+                        break;
+                    }
+
+                if (floating) clusters.Add(foundCluster);
+            }
+
+            return clusters;
+        }
+
+        private void ResetProcessed()
+        {
+            for (var r = 0; r < _rows; r++)
+            for (var c = 0; c < _columns; c++)
+                _tiles[r][c].Processed = false;
+        }
+
+        private void RemoveEmptyTiles()
+        {
+            for (var r = 0; r < _rows; r++)
+            {
+                var remove = true;
+
+                for (var c = 0; c < _columns; c++)
+                {
+                    if (!_tiles[r][c].Anchor) continue;
+
+                    remove = false;
+                }
+
+                if (!remove) continue;
+
+                _tiles.Remove(_tiles[r]);
+
+                _rows--;
+            }
         }
 
         private IEnumerator ActivateEffector(Vector3 position)

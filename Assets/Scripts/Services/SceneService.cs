@@ -19,9 +19,9 @@ namespace BubbleShooter
             if (Application.CanStreamedLevelBeLoaded(sceneName))
             {
                 SceneManager.LoadScene(sceneName);
-                
+
                 Context.Instance.NotificationService.Notify(NotificationType.SceneLoaded);
-            
+
                 _currentScene = SceneManager.GetActiveScene();
             }
             else

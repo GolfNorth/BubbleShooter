@@ -8,6 +8,7 @@ namespace BubbleShooter
         private BubbleColor _bubbleColor;
         private SpringJoint2D _springJoint;
         private Rigidbody2D _rigidbody;
+        private Animator _animator;
         private MeshRenderer _meshRenderer;
         private BubbleState _currentState;
 
@@ -16,11 +17,12 @@ namespace BubbleShooter
         private BubbleMovingState _movingState;
         private BubbleStickedState _stickedState;
         private BubbleFallingState _fallingState;
+        private BubbleBurstingState _burstingState;
 
         public BubbleObject BubbleObject { get; set; }
-        
+
         public Anchor Anchor { get; set; }
-        
+
         public BubbleTrajectory Trajectory { get; set; }
 
         public BubbleColor Color
@@ -37,17 +39,21 @@ namespace BubbleShooter
 
         public Rigidbody2D Rigidbody => _rigidbody;
 
+        public Animator Animator => _animator;
+
         private void Awake()
         {
             _springJoint = GetComponent<SpringJoint2D>();
             _rigidbody = GetComponent<Rigidbody2D>();
+            _animator = GetComponent<Animator>();
             _meshRenderer = GetComponent<MeshRenderer>();
-            
+
             _idleState = new BubbleIdleState(this);
             _aimingState = new BubbleAimingState(this);
             _movingState = new BubbleMovingState(this);
             _stickedState = new BubbleStickedState(this);
             _fallingState = new BubbleFallingState(this);
+            _burstingState = new BubbleBurstingState(this);
         }
 
         public void Stick(Anchor anchor)
@@ -62,12 +68,18 @@ namespace BubbleShooter
             Anchor = null;
         }
 
+        public void Burst()
+        {
+            SwitchState(BubbleStateType.Bursting);
+            Anchor = null;
+        }
+
         public void SwitchState(BubbleStateType state)
         {
             if (_currentState?.State == state) return;
-            
+
             BubbleState nextState;
-            
+
             switch (state)
             {
                 default:
@@ -86,12 +98,14 @@ namespace BubbleShooter
                 case BubbleStateType.Falling:
                     nextState = _fallingState;
                     break;
+                case BubbleStateType.Bursting:
+                    nextState = _burstingState;
+                    break;
             }
-            
+
             _currentState?.Exit();
             _currentState = nextState;
             _currentState.Enter();
-            
         }
 
         private void Update()

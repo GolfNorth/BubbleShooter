@@ -6,6 +6,7 @@
         Aiming,
         Moving,
         Sticked,
-        Falling
+        Falling,
+        Bursting
     }
 }

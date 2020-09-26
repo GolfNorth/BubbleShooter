@@ -10,7 +10,7 @@ namespace BubbleShooter
         [SerializeField] private string _abbreviation;
 
         public bool IsSpawned => _isSpawned;
-        
+
         public Color Color => _color;
 
         public string Abbreviation => _abbreviation;

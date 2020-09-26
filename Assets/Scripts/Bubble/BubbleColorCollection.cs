@@ -14,7 +14,7 @@ namespace BubbleShooter
             get
             {
                 abbreviation = abbreviation.ToUpper();
-                
+
                 if (_colorsDictionary is null)
                 {
                     _colorsDictionary = new Dictionary<string, BubbleColor>();
