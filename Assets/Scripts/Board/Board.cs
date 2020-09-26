@@ -187,6 +187,10 @@ namespace BubbleShooter
 
             var cluster = GetCluster(coordinate, true, true);
 
+            var position = _tiles[coordinate.Row][coordinate.Column].Anchor.transform.position;
+
+            StartCoroutine(ActivateEffector(position));
+            
             if (cluster.Count >= 3)
             {
                 foreach (var tile in cluster) BurstsBubble(tile.Coordinate);
@@ -196,12 +200,6 @@ namespace BubbleShooter
                 foreach (var floatingCluster in floatingClusters)
                 foreach (var tile in floatingCluster)
                     UnstickBubble(tile.Coordinate);
-            }
-            else
-            {
-                var position = _tiles[coordinate.Row][coordinate.Column].Anchor.transform.position;
-
-                StartCoroutine(ActivateEffector(position));
             }
 
             if (_fallingBubbles == 0)

@@ -105,7 +105,7 @@ namespace BubbleShooter
             if (count == maxCount) _colorsCount.Remove(color);
             
             color = GetRandomColor();
-            bubble.Color = GetRandomColor();
+            bubble.Color = color;
                 
             _colorsCount[color]++;
         }
